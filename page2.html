@@ -1,0 +1,85 @@
+<html>
+<body onload="loadXMLDoc()">
+
+<p style="padding-left: 60px;">&nbsp;</p>
+<p style="padding-left: 150px;">&nbsp;</p>
+<table style="margin-left: 90px;">
+<tbody style="padding-left: 90px;">
+<tr style="padding-left: 90px;">
+<td style="padding-left: 90px;"><strong>Updated:</strong></td>
+<td style="padding-left: 90px;"><p id="timeAgo">Loading...&nbsp;</p></td>
+<td style="padding-left: 90px;">&nbsp;</td>
+</tr>
+<tr style="padding-left: 90px;">
+<td style="padding-left: 90px;"><strong>Profit:</strong></td>
+<td style="padding-left: 90px;"><p id="profit">Loading...&nbsp;</p></td>
+<td style="padding-left: 90px;">&nbsp;</td>
+</tr>
+<tr style="padding-left: 90px;">
+<td style="padding-left: 90px;"><strong>Equity:</strong></td>
+<td style="padding-left: 90px;"><p id="equity">Loading...&nbsp;</p></td>
+<td style="padding-left: 90px;">&nbsp;</td>
+</tr>
+<tr style="padding-left: 90px;">
+<td style="padding-left: 90px;">&nbsp;</td>
+<td style="padding-left: 90px;">&nbsp;</td>
+<td style="padding-left: 90px;">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+
+
+<script>
+function loadXMLDoc() {
+    var request = new XMLHttpRequest();
+
+    request.onreadystatechange = function() {
+
+    if (this.readyState == 4 && this.status == 200) {
+
+	var resp=this.responseText;
+
+	var start=resp.search("Equity:");
+	resp=resp.substring(start);
+	start=resp.search("\\(");
+	var end=resp.search("%");
+	var equity=resp.substring(start+1,end+1);
+	
+	resp=resp.substring(end);
+
+	start=resp.search("id=\"lastUpdatedTime\"");
+	resp=resp.substring(start);
+	start=resp.search(">");
+	end=resp.search("<");
+	var timeAgo=resp.substring(start+1,end);
+
+	resp=resp.substring(end);
+
+	start=resp.search("Today");
+	resp=resp.substring(start,start+500);
+
+	start=resp.search(";");
+	resp=resp.substring(start,start+500);	
+	end=resp.search("<");
+	var profit="$"+resp.substring(1,end);
+
+	resp=null;
+	resp="";
+
+	console.log(timeAgo);
+	console.log(profit);
+	console.log(equity);
+
+	document.getElementById("timeAgo").innerHTML=timeAgo;
+	document.getElementById("profit").innerHTML=profit;
+	document.getElementById("equity").innerHTML=equity;
+    };
+}
+    request.open('GET', 'https://cors-anywhere.herokuapp.com/https://www.myfxbook.com/members/JForex78/fxbooksignalstart/3356200',false);
+    request.send();
+
+}
+</script>
+
+</body>
+</html>
